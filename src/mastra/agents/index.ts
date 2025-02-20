@@ -2,12 +2,11 @@ import { openai } from "@ai-sdk/openai";
 import { Agent } from "@mastra/core/agent";
 import { MastraMCPClient } from "@mastra/mcp";
 import { Memory } from "@mastra/memory";
-import { weatherTool } from "../tools";
 
 const CONTENTFUL_CMA_TOKEN = process.env.CONTENTFUL_CMA_TOKEN || "";
 const CONTENTFUL_HOST = process.env.CONTENTFUL_HOST || "";
 
-const contentfulClient = new MastraMCPClient({
+const contentfulManagementClient = new MastraMCPClient({
   name: "contentful",
   server: {
     command: "npx",
@@ -22,7 +21,20 @@ const contentfulClient = new MastraMCPClient({
   },
 });
 
-export const contentfulAgent = new Agent({
+const contentfulDeliveryClient = new MastraMCPClient({
+  name: "contentful-delivery",
+  server: {
+    command: "npx",
+    args: ["-y", "@mshaaban0/contentful-delivery-mcp-server@latest"],
+    env: {
+      ...process.env,
+      CONTENTFUL_ACCESS_TOKEN: "XCgoPvoG9ErCdnJRoAvf10LQvYL_fm7r-LOGoQRAhOE",
+      CONTENTFUL_SPACE_ID: "07cd27yms10j",
+    },
+  },
+});
+
+export const contentfulManagementAgent = new Agent({
   name: "Contentful Management",
   instructions: `
     You are a contentful assistant that helps with contentful operations, use tools to do contentful operations
@@ -31,40 +43,33 @@ export const contentfulAgent = new Agent({
   memory: new Memory(),
 });
 
+export const contentfulDeliveryAgent = new Agent({
+  name: "Customers Assistant Bot",
+  instructions: `
+    You are an assistant bot that helps customers with their questions, your data source is contentful, try to search for information in contentful before answering questions, use the search tools to find relevant information and provide accurate answers based on the contentful data
+  `,
+  model: openai("gpt-4o"),
+  memory: new Memory(),
+});
+
 try {
   // Connect to the MCP server
-  await contentfulClient.connect();
+  await contentfulDeliveryClient.connect();
+  await contentfulManagementClient.connect();
 
   // Gracefully handle process exits so the docker subprocess is cleaned up
   process.on("exit", () => {
-    contentfulClient.disconnect();
+    contentfulDeliveryClient.disconnect();
+    contentfulManagementClient.disconnect();
   });
 
   // Get available tools
-  const tools = await contentfulClient.tools();
+  const deliveryTools = await contentfulDeliveryClient.tools();
+  const managementTools = await contentfulManagementClient.tools();
 
   // Use the agent with the MCP tools
-  contentfulAgent.__setTools(tools);
+  contentfulDeliveryAgent.__setTools(deliveryTools);
+  contentfulManagementAgent.__setTools(managementTools);
 } catch (error) {
   console.error("Error:", error);
-} finally {
-  // Always disconnect when done
-  // await contentfulClient.disconnect();
 }
-
-export const weatherAgent = new Agent({
-  name: "Weather Agent",
-  instructions: `
-      You are a helpful weather assistant that provides accurate weather information.
-
-      Your primary function is to help users get weather details for specific locations. When responding:
-      - Always ask for a location if none is provided
-      - If giving a location with multiple parts (e.g. "New York, NY"), use the most relevant part (e.g. "New York")
-      - Include relevant details like humidity, wind conditions, and precipitation
-      - Keep responses concise but informative
-
-      Use the weatherTool to fetch current weather data.
-`,
-  model: openai("gpt-4o"),
-  tools: { weatherTool },
-});
