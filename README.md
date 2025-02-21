@@ -1,13 +1,14 @@
-````markdown README.md
-# Contentful Assistant
+# AI Assistant Chatbot with Contentful
 
-A Mastra-powered application that integrates with OpenAI and Contentful, featuring weather functionality.
+A Mastra-powered AI Chatbot application that integrates with OpenAI, Anthropic Claude and Contentful MCP Servers.
+Aims to provide an intelligent conversational based on your contentful data while maintaining a secure and accurate chatbot that doesn't hallucinate.
 
 ## Prerequisites
 
 - Node.js
 - OpenAI API key
-- Contentful CMA token
+- Anthropic API Key
+- Contentful Space ID, CDA and (CMA Token for Contentful Agent)
 
 ## Setup
 
@@ -17,7 +18,6 @@ A Mastra-powered application that integrates with OpenAI and Contentful, featuri
 ```bash
 npm install
 ```
-````
 
 3. Create a `.env.development` file based on `.env.development.Example`:
 
@@ -29,9 +29,10 @@ CONTENTFUL_HOST=api.flinkly.com
 
 ## Features
 
-- Weather conditions reporting with detailed weather codes
-- Contentful integration
-- Built with Mastra framework
+It has two agents in place (Contentful Management) and (Assistant Bot)
+
+- Assistant Bot: an agent that uses Contentful CDA (Content Delivery API) to fetch and search through your content to answer questions from your content
+- Contentful Management: an agent that operates on your Contentful space (create, update, delete) content
 
 ## Development
 
@@ -57,16 +58,3 @@ npm run dev
 ## License
 
 ISC
-
-```
-
-Note: Based on the provided files, I've created a basic README. Some sections (like detailed usage instructions) couldn't be included because the full functionality of the agents isn't visible in the shared code. To make this README more comprehensive, you might want to include:
-
-1. More details about the weather and contentful agents
-2. Specific usage examples
-3. API documentation
-4. Configuration options
-5. Deployment instructions
-
-These could be added once more information about the project's functionality is available.
-```
