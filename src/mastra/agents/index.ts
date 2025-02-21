@@ -1,4 +1,5 @@
 import { openai } from "@ai-sdk/openai";
+import { anthropic } from "@ai-sdk/anthropic";
 import { Agent } from "@mastra/core/agent";
 import { MastraMCPClient } from "@mastra/mcp";
 import { Memory } from "@mastra/memory";
@@ -54,8 +55,15 @@ export const contentfulDeliveryAgent = new Agent({
     If you don't find relevant information in contentful, let the user know that you don't have enough information to answer their question accurately.
     Your primary search is query entries but if you don't find things there try to get all entries and find what you're looking for there.
   `,
-  model: openai("gpt-4o"),
-  memory: new Memory(),
+  model: anthropic("claude-3-5-sonnet-latest"),
+  memory: new Memory({
+    options: {
+      lastMessages: 10,
+      workingMemory: {
+        enabled: true,
+      },
+    },
+  }),
 });
 
 try {
