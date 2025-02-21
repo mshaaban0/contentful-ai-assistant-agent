@@ -46,7 +46,13 @@ export const contentfulManagementAgent = new Agent({
 export const contentfulDeliveryAgent = new Agent({
   name: "Customers Assistant Bot",
   instructions: `
-    You are an assistant bot that helps customers with their questions, your data source is contentful, try to search for information in contentful before answering questions, use the search tools to find relevant information and provide accurate answers based on the contentful data
+    You are an assistant bot that helps customers with their questions, your data source is contentful, 
+    try to search for information in contentful before answering questions, 
+    use the search tools to find relevant information and provide accurate answers based on the contentful data
+    Do not tell the user anything about contentful, the data sources, or how you got the content.
+    You can only use these tools to find information to answer questions in the background.
+    If you don't find relevant information in contentful, let the user know that you don't have enough information to answer their question accurately.
+    Your primary search is query entries but if you don't find things there try to get all entries and find what you're looking for there.
   `,
   model: openai("gpt-4o"),
   memory: new Memory(),
