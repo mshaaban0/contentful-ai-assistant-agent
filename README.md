@@ -22,9 +22,12 @@ npm install
 3. Create a `.env.development` file based on `.env.development.Example`:
 
 ```
-OPENAI_API_KEY=your_api_key
-CONTENTFUL_CMA_TOKEN=your_contentful_token
-CONTENTFUL_HOST=api.flinkly.com
+OPENAI_API_KEY=your_openai_key
+ANTHROPIC_API_KEY=your_anthropic_key
+CONTENTFUL_SPACE_ID=your_contentful_space_id
+CONTENTFUL_CDA_TOKEN=your_contentful_CDA_token
+CONTENTFUL_CMA_TOKEN=your_contentful_CMA_token
+CONTENTFUL_HOST=api.contentful.com
 ```
 
 ## Features
