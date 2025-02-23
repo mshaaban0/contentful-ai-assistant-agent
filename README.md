@@ -48,7 +48,7 @@ npm run dev
 ## Project Structure
 
 - `index.ts` - Main application entry point
-- `agents/` - Contains weather and contentful agents
+- `agents/` - Contains contentful assistant, and contentful management agents
 - Environment configuration files
 
 ## Dependencies
@@ -60,4 +60,4 @@ npm run dev
 
 ## License
 
-ISC
+MIT
