@@ -15,14 +15,15 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^1.1.9",
     "@ai-sdk/openai": "^1.1.13",
-    "@mastra/core": "^0.2.1",
-    "@mastra/mcp": "^0.1.1",
-    "@mastra/memory": "^0.1.1",
+    "@mastra/core": "^0.7.0",
+    "@mastra/mcp": "^0.3.6",
+    "@mastra/mcp-docs-server": "^0.0.5",
+    "@mastra/memory": "^0.2.6",
     "zod": "^3.24.2"
   },
   "devDependencies": {
     "@types/node": "^22.13.4",
-    "mastra": "^0.2.1",
+    "mastra": "^0.4.4",
     "tsx": "^4.19.3",
     "typescript": "^5.7.3"
   }

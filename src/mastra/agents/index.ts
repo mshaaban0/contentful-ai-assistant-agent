@@ -4,24 +4,6 @@ import { Agent } from "@mastra/core/agent";
 import { MastraMCPClient } from "@mastra/mcp";
 import { Memory } from "@mastra/memory";
 
-const CONTENTFUL_CMA_TOKEN = process.env.CONTENTFUL_CMA_TOKEN || "";
-const CONTENTFUL_HOST = process.env.CONTENTFUL_HOST || "";
-
-const contentfulManagementClient = new MastraMCPClient({
-  name: "contentful",
-  server: {
-    command: "npx",
-    args: [
-      "-y",
-      "@ivotoby/contentful-management-mcp-server",
-      "--management-token",
-      CONTENTFUL_CMA_TOKEN,
-      "--host",
-      CONTENTFUL_HOST,
-    ],
-  },
-});
-
 const contentfulDeliveryClient = new MastraMCPClient({
   name: "contentful-delivery",
   server: {
@@ -31,17 +13,9 @@ const contentfulDeliveryClient = new MastraMCPClient({
       ...process.env,
       CONTENTFUL_ACCESS_TOKEN: "XCgoPvoG9ErCdnJRoAvf10LQvYL_fm7r-LOGoQRAhOE",
       CONTENTFUL_SPACE_ID: "07cd27yms10j",
+      CONTENTFUL_CONTENT_TYPE_IDS: "faqItem",
     },
   },
-});
-
-export const contentfulManagementAgent = new Agent({
-  name: "Contentful Management",
-  instructions: `
-    You are a contentful assistant that helps with contentful operations, use tools to do contentful operations
-  `,
-  model: openai("gpt-4o"),
-  memory: new Memory(),
 });
 
 export const contentfulDeliveryAgent = new Agent({
@@ -67,23 +41,19 @@ export const contentfulDeliveryAgent = new Agent({
 });
 
 try {
-  // Connect to the MCP server
   await contentfulDeliveryClient.connect();
-  await contentfulManagementClient.connect();
 
   // Gracefully handle process exits so the docker subprocess is cleaned up
   process.on("exit", () => {
     contentfulDeliveryClient.disconnect();
-    contentfulManagementClient.disconnect();
   });
 
   // Get available tools
   const deliveryTools = await contentfulDeliveryClient.tools();
-  const managementTools = await contentfulManagementClient.tools();
 
-  // Use the agent with the MCP tools
+  // In newer versions of Mastra, __setTools expects a record of tools, not an array
+  // Make sure we're passing the tools in the correct format
   contentfulDeliveryAgent.__setTools(deliveryTools);
-  contentfulManagementAgent.__setTools(managementTools);
 } catch (error) {
   console.error("Error:", error);
 }
